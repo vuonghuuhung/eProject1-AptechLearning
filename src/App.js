@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, useEffect } from "react";
+import { connect } from "react-redux";
+import { Route, Routes } from "react-router-dom";
 
-function App() {
+import getProductFetch from "./store/actions/productAction";
+import getBrandFetch from "./store/actions/brandAction";
+import { Home, Login, SignUp, Brand, NotFound } from "./Components";
+
+function App(props) {
+  const { product, user, getProductFetch, getBrandFetch } = props;
+  useEffect(() => {
+    getProductFetch();
+    getBrandFetch();
+    return () => {};
+  }, []);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Login" element={<Login />} />
+        <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/Brand/:brand" element={<Brand />} />
+        <Route path="/*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  user: state.user,
+  product: state.product,
+});
+const mapDispatchToProps = (dispatch) => ({
+  getProductFetch: () => dispatch(getProductFetch()),
+  getBrandFetch: () => dispatch(getBrandFetch()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(App);
